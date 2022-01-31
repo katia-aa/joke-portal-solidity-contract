@@ -9,7 +9,7 @@ contract JokePortal {
     // Add state variable that holds addresses waved so far in an array
 
     constructor() {
-        console.log("yo yo yo");
+        console.log("Yo yo yo");
     }
 
     function clap() public {
@@ -19,8 +19,8 @@ contract JokePortal {
     }
     
     function getTotalUserAddresses() public view {
-        console.log('We have %d addresses in total who waves at us.', userAddresses.length);
-        console.log('Here are the addresses that waved at us:');
+        console.log('We have %d addresses in total who clapped at us.', userAddresses.length);
+        console.log('Here are the addresses that clapped at us:');
         for (uint i=0; i < userAddresses.length; i++) {
             console.log(userAddresses[i]);
         }
