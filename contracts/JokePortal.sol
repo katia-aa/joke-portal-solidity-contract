@@ -5,24 +5,33 @@ pragma solidity ^0.8.0;
 import "hardhat/console.sol";
 
 contract JokePortal {
-    address[] userAddresses;
-    // Add state variable that holds addresses waved so far in an array
+    event NewJoke(address indexed from, uint256 timestamp, string message);
+
+    struct Joke {
+        address joker; // address of user who waved.
+        string message; // message the user sent.
+        uint256 timestamp; // timestamp of wave
+    }
+
+    Joke[] jokes;
 
     constructor() {
-        console.log("Yo yo yo");
+        console.log("I am a contract that makes funny jokes possible.");
     }
 
-    function clap() public {
-        address senderAddress = msg.sender;
-        console.log('%s has waved!', senderAddress);
-        userAddresses.push(senderAddress);
+    function joke(string memory _message) public {
+        address joker = msg.sender;
+        console.log('%s has send us a joke!', joker);
+        jokes.push(Joke(joker, _message, block.timestamp));
+        emit NewJoke(joker, block.timestamp, _message);
     }
     
-    function getTotalUserAddresses() public view {
-        console.log('We have %d addresses in total who clapped at us.', userAddresses.length);
-        console.log('Here are the addresses that clapped at us:');
-        for (uint i=0; i < userAddresses.length; i++) {
-            console.log(userAddresses[i]);
-        }
+    function getAllJokes() public view returns(Joke[] memory)  {
+        return jokes;
+    }
+
+    function getTotalJokes() public view returns(uint256)  {
+        console.log('We have %d total jokes!', jokes.length);
+        return jokes.length;
     }
 }

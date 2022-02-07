@@ -3,17 +3,23 @@ const main = async () => {
   const jokeContractFactory = await hre.ethers.getContractFactory("JokePortal");
   const jokeContract = await jokeContractFactory.deploy();
   await jokeContract.deployed();
-
   console.log("Contract deployed to:", jokeContract.address);
   console.log("Contract deployed by:", owner.address);
 
-  let jokeTxn = await jokeContract.clap();
+  let jokeCount;
+  jokeCount = await jokeContract.getTotalJokes();
+  console.log(jokeCount.toNumber());
+
+  // Send transaction by owner
+  let jokeTxn = await jokeContract.joke("So that chicken crossed the road...");
+  await jokeTxn.wait(); // Wait for the transaction to be mined.
+
+  // Send transaction by randomPerson
+  jokeTxn = await jokeContract.connect(randomPerson).joke("knock knock!");
   await jokeTxn.wait();
 
-  jokeTxn = await jokeContract.connect(randomPerson).clap();
-  await jokeTxn.wait();
-
-  logAddresses = await jokeContract.getTotalUserAddresses();
+  let allJokes = await jokeContract.getAllJokes();
+  console.log(allJokes);
 };
 
 const runMain = async () => {
