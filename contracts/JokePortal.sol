@@ -15,7 +15,7 @@ contract JokePortal {
 
     Joke[] jokes;
 
-    constructor() {
+    constructor() payable {
         console.log("I am a contract that makes funny jokes possible.");
     }
 
@@ -24,6 +24,14 @@ contract JokePortal {
         console.log('%s has send us a joke!', joker);
         jokes.push(Joke(joker, _message, block.timestamp));
         emit NewJoke(joker, block.timestamp, _message);
+        
+        uint256 prizeAmount = 0.0001 ether;
+        require(
+            prizeAmount <= address(this).balance,
+            'Trying to withdraw more money than the contract has.'
+        );
+        (bool success, ) = (msg.sender).call{value: prizeAmount}("");
+        require(success, 'Failed to withdraw money from contract.');
     }
     
     function getAllJokes() public view returns(Joke[] memory)  {

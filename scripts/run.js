@@ -1,22 +1,30 @@
 const main = async () => {
   const [owner, randomPerson] = await hre.ethers.getSigners();
   const jokeContractFactory = await hre.ethers.getContractFactory("JokePortal");
-  const jokeContract = await jokeContractFactory.deploy();
+  const jokeContract = await jokeContractFactory.deploy({
+    value: hre.ethers.utils.parseEther("0.1"),
+  });
   await jokeContract.deployed();
-  console.log("Contract deployed to:", jokeContract.address);
-  console.log("Contract deployed by:", owner.address);
+  console.log("Contract addy:", jokeContract.address);
 
-  let jokeCount;
-  jokeCount = await jokeContract.getTotalJokes();
-  console.log(jokeCount.toNumber());
+  // Get contract balance
+  let contractBalance = await hre.ethers.provider.getBalance(
+    jokeContract.address
+  );
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance)
+  );
 
-  // Send transaction by owner
+  // Send Joke
   let jokeTxn = await jokeContract.joke("So that chicken crossed the road...");
   await jokeTxn.wait(); // Wait for the transaction to be mined.
 
-  // Send transaction by randomPerson
-  jokeTxn = await jokeContract.connect(randomPerson).joke("knock knock!");
-  await jokeTxn.wait();
+  contractBalance = await hre.ethers.provider.getBalance(jokeContract.address);
+  console.log(
+    "Contract balance:",
+    hre.ethers.utils.formatEther(contractBalance)
+  );
 
   let allJokes = await jokeContract.getAllJokes();
   console.log(allJokes);
